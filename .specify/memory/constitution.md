@@ -1,18 +1,18 @@
 <!--
 Sync Impact Report
 ==================
-Version change: 0.0.0 → 1.0.0 (Initial ratification)
-Modified principles: N/A (new constitution)
+Version change: 1.0.0 → 2.0.0 (MAJOR - Phase II expansion)
+Modified principles:
+  - III. Simplicity First → Updated to clarify Phase I vs Phase II dependency scope
 Added sections:
-  - 6 Core Principles (Spec-Driven, Python Best Practices, Simplicity First, Modular Architecture, Type Safety, Test-Driven Mindset)
-  - Technology Stack section
-  - Development Workflow section
-  - Governance section
-Removed sections: N/A
+  - VII. API-First Design (Phase II)
+  - VIII. Full-Stack Standards (Phase II)
+  - Phase II Technology Stack (Frontend, Backend, Database, Auth, Deployment)
+Removed sections: None
 Templates requiring updates:
-  - plan-template.md: ✅ Compatible (references constitution check)
+  - plan-template.md: ✅ Compatible (already supports web app structure)
   - spec-template.md: ✅ Compatible (no constitution-specific changes needed)
-  - tasks-template.md: ✅ Compatible (no constitution-specific changes needed)
+  - tasks-template.md: ✅ Compatible (already supports frontend/backend split)
 Follow-up TODOs: None
 -->
 
@@ -45,15 +45,17 @@ All Python code MUST follow PEP 8 style guidelines, use type hints, include docs
 
 ### III. Simplicity First
 
-Use Python standard library only for Phase I. No external dependencies. In-memory storage only.
+Use appropriate dependencies for each phase. Phase I uses standard library only; Phase II uses approved full-stack dependencies.
 
-**Rationale**: External dependencies add complexity, security risks, and maintenance burden. Starting simple ensures the core logic is sound before adding complexity.
+**Rationale**: External dependencies add complexity, security risks, and maintenance burden. Starting simple ensures the core logic is sound before adding complexity. Phase II expands scope with vetted dependencies for full-stack development.
 
 **Rules**:
 - Phase I: Standard library only (no pip install except dev tools)
-- Data storage: Python dict/list in-memory structures
-- External dependencies require explicit justification and ADR
-- YAGNI (You Aren't Gonna Need It) principle applies
+- Phase I Data storage: Python dict/list in-memory structures
+- Phase II: Approved dependencies only (see Technology Stack section)
+- Phase II Data storage: PostgreSQL via SQLModel ORM
+- New dependencies require explicit justification and ADR
+- YAGNI (You Aren't Gonna Need It) principle applies to both phases
 
 ### IV. Modular Architecture
 
@@ -91,16 +93,74 @@ Every feature MUST be testable. Write clear, maintainable code that can be verif
 - Side effects MUST be isolated and controllable
 - Tests SHOULD be written before or alongside implementation
 
+### VII. API-First Design (Phase II)
+
+Design APIs before implementation. All endpoints MUST have clear contracts and documentation.
+
+**Rationale**: API-first design ensures frontend and backend teams can work in parallel, enables automated testing, and provides self-documenting interfaces.
+
+**Rules**:
+- RESTful endpoints with clear HTTP semantics (GET reads, POST creates, PUT/PATCH updates, DELETE removes)
+- OpenAPI/Swagger documentation MUST be maintained for all endpoints
+- Stateless backend design: no server-side session storage
+- JWT-based authentication for all protected endpoints
+- API versioning strategy MUST be defined (path-based: /api/v1/)
+- Error responses MUST follow consistent structure with error codes
+
+### VIII. Full-Stack Standards (Phase II)
+
+Adhere to modern full-stack development patterns for web applications.
+
+**Rationale**: Consistent patterns across frontend and backend reduce cognitive load, improve maintainability, and leverage framework optimizations.
+
+**Rules**:
+- Frontend: Next.js App Router patterns MUST be followed
+- Server Components by default; Client Components only when interactivity required
+- TypeScript strict mode enabled for all frontend code
+- Tailwind CSS for styling (no custom CSS unless justified)
+- Better Auth for authentication flows
+- Environment variables for all configuration (no hardcoded secrets)
+- Responsive design MUST work on mobile and desktop
+
 ## Technology Stack
 
-**Language**: Python 3.13+
+### Phase I (CLI Application)
+
+**Language**: Python 3.12+
 **Package Manager**: UV
 **Runtime**: CPython
-**Frameworks**: None (standard library only for Phase I)
+**Frameworks**: None (standard library only)
 **Data Storage**: In-memory (list/dict)
 **Testing**: pytest (development dependency only)
 **Linting**: ruff (PEP 8 enforcement)
 **Type Checking**: mypy or pyright
+
+### Phase II (Full-Stack Web Application)
+
+**Frontend**:
+- Next.js 16+ with App Router
+- TypeScript 5.x (strict mode)
+- Tailwind CSS for styling
+- Better Auth for authentication
+
+**Backend**:
+- FastAPI for REST API
+- SQLModel for ORM
+- Pydantic for validation
+- Python 3.12+
+
+**Database**:
+- Neon PostgreSQL (serverless)
+- SQLModel migrations
+
+**Authentication**:
+- Better Auth
+- JWT tokens for API access
+
+**Deployment**:
+- Frontend: Vercel
+- Backend: Render or Railway
+- Database: Neon (managed PostgreSQL)
 
 ## Development Workflow
 
@@ -140,4 +200,4 @@ This constitution supersedes all other practices. It defines the non-negotiable 
 - Complexity MUST be justified against Simplicity First principle
 - Runtime guidance in CLAUDE.md for agent-specific instructions
 
-**Version**: 1.0.0 | **Ratified**: 2025-12-27 | **Last Amended**: 2025-12-27
+**Version**: 2.0.0 | **Ratified**: 2025-12-27 | **Last Amended**: 2025-12-28
