@@ -24,17 +24,17 @@
 
 **Purpose**: Project initialization and basic structure for both frontend and backend
 
-- [ ] T001 Create backend project structure per plan.md in `backend/`
-- [ ] T002 [P] Initialize backend Python project with pyproject.toml in `backend/pyproject.toml`
-- [ ] T003 [P] Add FastAPI, SQLModel, Pydantic, asyncpg dependencies to `backend/pyproject.toml`
-- [ ] T004 [P] Create frontend project with Next.js 16+ in `frontend/`
-- [ ] T005 [P] Add TypeScript, Tailwind CSS, Better Auth to frontend in `frontend/package.json`
-- [ ] T006 [P] Configure Tailwind CSS in `frontend/tailwind.config.ts`
-- [ ] T007 [P] Configure TypeScript strict mode in `frontend/tsconfig.json`
-- [ ] T008 [P] Create backend .env.example with required variables in `backend/.env.example`
-- [ ] T009 [P] Create frontend .env.example with required variables in `frontend/.env.example`
-- [ ] T010 [P] Configure ruff linting for backend in `backend/pyproject.toml`
-- [ ] T011 [P] Configure ESLint for frontend in `frontend/.eslintrc.json`
+- [x] T001 Create backend project structure per plan.md in `backend/`
+- [x] T002 [P] Initialize backend Python project with pyproject.toml in `backend/pyproject.toml`
+- [x] T003 [P] Add FastAPI, SQLModel, Pydantic, asyncpg dependencies to `backend/pyproject.toml`
+- [x] T004 [P] Create frontend project with Next.js 16+ in `frontend/`
+- [x] T005 [P] Add TypeScript, Tailwind CSS, Better Auth to frontend in `frontend/package.json`
+- [x] T006 [P] Configure Tailwind CSS in `frontend/tailwind.config.ts`
+- [x] T007 [P] Configure TypeScript strict mode in `frontend/tsconfig.json`
+- [x] T008 [P] Create backend .env.example with required variables in `backend/.env.example`
+- [x] T009 [P] Create frontend .env.example with required variables in `frontend/.env.example`
+- [x] T010 [P] Configure ruff linting for backend in `backend/pyproject.toml`
+- [x] T011 [P] Configure ESLint for frontend in `frontend/.eslintrc.json`
 
 ---
 
@@ -44,18 +44,18 @@
 
 **CRITICAL**: No user story work can begin until this phase is complete
 
-- [ ] T012 Create environment configuration loader in `backend/src/config.py`
-- [ ] T013 Setup database connection with async SQLModel in `backend/src/database.py`
-- [ ] T014 [P] Initialize Alembic for migrations in `backend/alembic/`
-- [ ] T015 Create base error response schema in `backend/src/schemas/error.py`
-- [ ] T016 [P] Implement global exception handler in `backend/src/main.py`
-- [ ] T017 [P] Create JWT utility functions (create, verify) in `backend/src/utils/security.py`
-- [ ] T018 [P] Create password hashing utilities (bcrypt) in `backend/src/utils/security.py`
-- [ ] T019 Create FastAPI app entry point with CORS in `backend/src/main.py`
-- [ ] T020 [P] Create TypeScript types from data-model.md in `frontend/src/types/index.ts`
-- [ ] T021 [P] Create API client base with fetch wrapper in `frontend/src/lib/api.ts`
-- [ ] T022 [P] Create root layout with Tailwind in `frontend/src/app/layout.tsx`
-- [ ] T023 Create auth dependency for protected routes in `backend/src/api/deps.py`
+- [x] T012 Create environment configuration loader in `backend/src/config.py`
+- [x] T013 Setup database connection with async SQLModel in `backend/src/database.py`
+- [x] T014 [P] Initialize Alembic for migrations in `backend/alembic/`
+- [x] T015 Create base error response schema in `backend/src/schemas/error.py`
+- [x] T016 [P] Implement global exception handler in `backend/src/main.py`
+- [x] T017 [P] Create JWT utility functions (create, verify) in `backend/src/utils/security.py`
+- [x] T018 [P] Create password hashing utilities (bcrypt) in `backend/src/utils/security.py`
+- [x] T019 Create FastAPI app entry point with CORS in `backend/src/main.py`
+- [x] T020 [P] Create TypeScript types from data-model.md in `frontend/src/types/index.ts`
+- [x] T021 [P] Create API client base with fetch wrapper in `frontend/src/lib/api.ts`
+- [x] T022 [P] Create root layout with Tailwind in `frontend/src/app/layout.tsx`
+- [x] T023 Create auth dependency for protected routes in `backend/src/api/deps.py`
 
 **Checkpoint**: Foundation ready - user story implementation can now begin
 
@@ -69,27 +69,27 @@
 
 ### Backend Implementation (US1)
 
-- [ ] T024 [P] [US1] Create User SQLModel entity in `backend/src/models/user.py`
-- [ ] T025 [P] [US1] Create User Pydantic schemas (UserCreate, UserLogin, UserResponse, AuthResponse) in `backend/src/schemas/user.py`
-- [ ] T026 [US1] Create initial Alembic migration for users table in `backend/alembic/versions/001_users.py`
-- [ ] T027 [US1] Implement AuthService (register, login, logout, get_current_user) in `backend/src/services/auth.py`
-- [ ] T028 [US1] Implement POST /api/v1/auth/register endpoint in `backend/src/api/auth.py`
-- [ ] T029 [US1] Implement POST /api/v1/auth/login endpoint in `backend/src/api/auth.py`
-- [ ] T030 [US1] Implement POST /api/v1/auth/logout endpoint in `backend/src/api/auth.py`
-- [ ] T031 [US1] Implement GET /api/v1/auth/me endpoint in `backend/src/api/auth.py`
-- [ ] T032 [US1] Register auth router in FastAPI app in `backend/src/main.py`
+- [x] T024 [P] [US1] Create User SQLModel entity in `backend/src/models/user.py`
+- [x] T025 [P] [US1] Create User Pydantic schemas (UserCreate, UserLogin, UserResponse, AuthResponse) in `backend/src/schemas/user.py`
+- [x] T026 [US1] Create initial Alembic migration for users table in `backend/alembic/versions/001_users.py`
+- [x] T027 [US1] Implement AuthService (register, login, logout, get_current_user) in `backend/src/services/auth.py`
+- [x] T028 [US1] Implement POST /api/v1/auth/register endpoint in `backend/src/api/auth.py`
+- [x] T029 [US1] Implement POST /api/v1/auth/login endpoint in `backend/src/api/auth.py`
+- [x] T030 [US1] Implement POST /api/v1/auth/logout endpoint in `backend/src/api/auth.py`
+- [x] T031 [US1] Implement GET /api/v1/auth/me endpoint in `backend/src/api/auth.py`
+- [x] T032 [US1] Register auth router in FastAPI app in `backend/src/main.py`
 
 ### Frontend Implementation (US1)
 
-- [ ] T033 [P] [US1] Configure Better Auth client in `frontend/src/lib/auth.ts`
-- [ ] T034 [P] [US1] Create auth context/provider for session state in `frontend/src/lib/auth-provider.tsx`
-- [ ] T035 [US1] Create registration form component in `frontend/src/components/auth/register-form.tsx`
-- [ ] T036 [US1] Create login form component in `frontend/src/components/auth/login-form.tsx`
-- [ ] T037 [US1] Create register page in `frontend/src/app/(auth)/register/page.tsx`
-- [ ] T038 [US1] Create login page in `frontend/src/app/(auth)/login/page.tsx`
-- [ ] T039 [US1] Create landing page with login/register links in `frontend/src/app/page.tsx`
-- [ ] T040 [US1] Implement logout functionality in header component in `frontend/src/components/ui/header.tsx`
-- [ ] T041 [US1] Add protected route middleware in `frontend/src/middleware.ts`
+- [x] T033 [P] [US1] Configure Better Auth client in `frontend/src/lib/auth.ts`
+- [x] T034 [P] [US1] Create auth context/provider for session state in `frontend/src/lib/auth-provider.tsx`
+- [x] T035 [US1] Create registration form component in `frontend/src/components/auth/register-form.tsx`
+- [x] T036 [US1] Create login form component in `frontend/src/components/auth/login-form.tsx`
+- [x] T037 [US1] Create register page in `frontend/src/app/(auth)/register/page.tsx`
+- [x] T038 [US1] Create login page in `frontend/src/app/(auth)/login/page.tsx`
+- [x] T039 [US1] Create landing page with login/register links in `frontend/src/app/page.tsx`
+- [x] T040 [US1] Implement logout functionality in header component in `frontend/src/components/ui/header.tsx`
+- [x] T041 [US1] Add protected route middleware in `frontend/src/middleware.ts`
 
 **Checkpoint**: User Story 1 complete - users can register, login, logout, and sessions persist
 
@@ -103,30 +103,30 @@
 
 ### Backend Implementation (US2)
 
-- [ ] T042 [P] [US2] Create Task SQLModel entity in `backend/src/models/task.py`
-- [ ] T043 [P] [US2] Create Task Pydantic schemas (TaskCreate, TaskUpdate, TaskResponse, TaskListResponse) in `backend/src/schemas/task.py`
-- [ ] T044 [US2] Create Alembic migration for tasks table in `backend/alembic/versions/002_tasks.py`
-- [ ] T045 [US2] Implement TaskService (create, list, get, update, delete, toggle) in `backend/src/services/task.py`
-- [ ] T046 [US2] Implement GET /api/v1/tasks endpoint (list with pagination) in `backend/src/api/tasks.py`
-- [ ] T047 [US2] Implement POST /api/v1/tasks endpoint in `backend/src/api/tasks.py`
-- [ ] T048 [US2] Implement GET /api/v1/tasks/{id} endpoint in `backend/src/api/tasks.py`
-- [ ] T049 [US2] Implement PUT /api/v1/tasks/{id} endpoint in `backend/src/api/tasks.py`
-- [ ] T050 [US2] Implement DELETE /api/v1/tasks/{id} endpoint in `backend/src/api/tasks.py`
-- [ ] T051 [US2] Implement PATCH /api/v1/tasks/{id}/toggle endpoint in `backend/src/api/tasks.py`
-- [ ] T052 [US2] Register tasks router in FastAPI app in `backend/src/main.py`
+- [x] T042 [P] [US2] Create Task SQLModel entity in `backend/src/models/task.py`
+- [x] T043 [P] [US2] Create Task Pydantic schemas (TaskCreate, TaskUpdate, TaskResponse, TaskListResponse) in `backend/src/schemas/task.py`
+- [x] T044 [US2] Create Alembic migration for tasks table in `backend/alembic/versions/002_tasks.py`
+- [x] T045 [US2] Implement TaskService (create, list, get, update, delete, toggle) in `backend/src/services/task.py`
+- [x] T046 [US2] Implement GET /api/v1/tasks endpoint (list with pagination) in `backend/src/api/tasks.py`
+- [x] T047 [US2] Implement POST /api/v1/tasks endpoint in `backend/src/api/tasks.py`
+- [x] T048 [US2] Implement GET /api/v1/tasks/{id} endpoint in `backend/src/api/tasks.py`
+- [x] T049 [US2] Implement PUT /api/v1/tasks/{id} endpoint in `backend/src/api/tasks.py`
+- [x] T050 [US2] Implement DELETE /api/v1/tasks/{id} endpoint in `backend/src/api/tasks.py`
+- [x] T051 [US2] Implement PATCH /api/v1/tasks/{id}/toggle endpoint in `backend/src/api/tasks.py`
+- [x] T052 [US2] Register tasks router in FastAPI app in `backend/src/main.py`
 
 ### Frontend Implementation (US2)
 
-- [ ] T053 [P] [US2] Create task list component in `frontend/src/components/tasks/task-list.tsx`
-- [ ] T054 [P] [US2] Create task item component in `frontend/src/components/tasks/task-item.tsx`
-- [ ] T055 [P] [US2] Create task form component (add/edit) in `frontend/src/components/tasks/task-form.tsx`
-- [ ] T056 [US2] Create tasks API client functions in `frontend/src/lib/api.ts`
-- [ ] T057 [US2] Create tasks dashboard page in `frontend/src/app/(dashboard)/tasks/page.tsx`
-- [ ] T058 [US2] Implement add task functionality with optimistic UI in `frontend/src/components/tasks/task-form.tsx`
-- [ ] T059 [US2] Implement toggle completion with visual indicator in `frontend/src/components/tasks/task-item.tsx`
-- [ ] T060 [US2] Implement delete task with confirmation in `frontend/src/components/tasks/task-item.tsx`
-- [ ] T061 [US2] Implement edit task inline or modal in `frontend/src/components/tasks/task-item.tsx`
-- [ ] T062 [US2] Add responsive design for mobile in `frontend/src/components/tasks/task-list.tsx`
+- [x] T053 [P] [US2] Create task list component in `frontend/src/components/tasks/task-list.tsx`
+- [x] T054 [P] [US2] Create task item component in `frontend/src/components/tasks/task-item.tsx`
+- [x] T055 [P] [US2] Create task form component (add/edit) in `frontend/src/components/tasks/task-form.tsx`
+- [x] T056 [US2] Create tasks API client functions in `frontend/src/lib/api.ts`
+- [x] T057 [US2] Create tasks dashboard page in `frontend/src/app/(dashboard)/tasks/page.tsx`
+- [x] T058 [US2] Implement add task functionality with optimistic UI in `frontend/src/components/tasks/task-form.tsx`
+- [x] T059 [US2] Implement toggle completion with visual indicator in `frontend/src/components/tasks/task-item.tsx`
+- [x] T060 [US2] Implement delete task with confirmation in `frontend/src/components/tasks/task-item.tsx`
+- [x] T061 [US2] Implement edit task inline or modal in `frontend/src/components/tasks/task-item.tsx`
+- [x] T062 [US2] Add responsive design for mobile in `frontend/src/components/tasks/task-list.tsx`
 
 **Checkpoint**: User Story 2 complete - full CRUD operations work via web UI
 
@@ -140,12 +140,12 @@
 
 ### Implementation (US3)
 
-- [ ] T063 [US3] Configure OpenAPI/Swagger documentation in `backend/src/main.py`
-- [ ] T064 [US3] Add API versioning with /api/v1/ prefix in `backend/src/main.py`
-- [ ] T065 [P] [US3] Document all endpoints with OpenAPI descriptions in `backend/src/api/auth.py`
-- [ ] T066 [P] [US3] Document all endpoints with OpenAPI descriptions in `backend/src/api/tasks.py`
-- [ ] T067 [US3] Ensure consistent error response format across all endpoints in `backend/src/schemas/error.py`
-- [ ] T068 [US3] Add request/response examples to OpenAPI docs in `backend/src/schemas/`
+- [x] T063 [US3] Configure OpenAPI/Swagger documentation in `backend/src/main.py`
+- [x] T064 [US3] Add API versioning with /api/v1/ prefix in `backend/src/main.py`
+- [x] T065 [P] [US3] Document all endpoints with OpenAPI descriptions in `backend/src/api/auth.py`
+- [x] T066 [P] [US3] Document all endpoints with OpenAPI descriptions in `backend/src/api/tasks.py`
+- [x] T067 [US3] Ensure consistent error response format across all endpoints in `backend/src/schemas/error.py`
+- [x] T068 [US3] Add request/response examples to OpenAPI docs in `backend/src/schemas/`
 
 **Checkpoint**: User Story 3 complete - API is fully documented and versioned
 
@@ -159,12 +159,12 @@
 
 ### Implementation (US4)
 
-- [ ] T069 [US4] Add database indexes for performance in `backend/alembic/versions/003_indexes.py`
-- [ ] T070 [US4] Implement pagination in task list endpoint in `backend/src/services/task.py`
-- [ ] T071 [US4] Add database connection pooling configuration in `backend/src/database.py`
-- [ ] T072 [US4] Implement graceful database error handling in `backend/src/main.py`
-- [ ] T073 [US4] Add loading state for task list in frontend in `frontend/src/components/tasks/task-list.tsx`
-- [ ] T074 [US4] Add error state for database failures in frontend in `frontend/src/components/ui/error-message.tsx`
+- [x] T069 [US4] Add database indexes for performance in `backend/alembic/versions/003_indexes.py`
+- [x] T070 [US4] Implement pagination in task list endpoint in `backend/src/services/task.py`
+- [x] T071 [US4] Add database connection pooling configuration in `backend/src/database.py`
+- [x] T072 [US4] Implement graceful database error handling in `backend/src/main.py`
+- [x] T073 [US4] Add loading state for task list in frontend in `frontend/src/components/tasks/task-list.tsx`
+- [x] T074 [US4] Add error state for database failures in frontend in `frontend/src/components/ui/error-message.tsx`
 
 **Checkpoint**: User Story 4 complete - data persists reliably across sessions
 
@@ -178,12 +178,12 @@
 
 ### Implementation (US5)
 
-- [ ] T075 [US5] Ensure all task queries filter by user_id in `backend/src/services/task.py`
-- [ ] T076 [US5] Add ownership check before task update/delete in `backend/src/services/task.py`
-- [ ] T077 [US5] Return 403 Forbidden for unauthorized task access in `backend/src/api/tasks.py`
-- [ ] T078 [US5] Configure CORS to allow only frontend origin in `backend/src/main.py`
-- [ ] T079 [P] [US5] Add security headers middleware in `backend/src/main.py`
-- [ ] T080 [US5] Verify password hashing uses bcrypt in `backend/src/utils/security.py`
+- [x] T075 [US5] Ensure all task queries filter by user_id in `backend/src/services/task.py`
+- [x] T076 [US5] Add ownership check before task update/delete in `backend/src/services/task.py`
+- [x] T077 [US5] Return 403 Forbidden for unauthorized task access in `backend/src/api/tasks.py`
+- [x] T078 [US5] Configure CORS to allow only frontend origin in `backend/src/main.py`
+- [x] T079 [P] [US5] Add security headers middleware in `backend/src/main.py`
+- [x] T080 [US5] Verify password hashing uses bcrypt in `backend/src/utils/security.py`
 
 **Checkpoint**: User Story 5 complete - data isolation verified
 
@@ -193,15 +193,15 @@
 
 **Purpose**: Final improvements across all user stories
 
-- [ ] T081 [P] Verify responsive design on mobile viewports in `frontend/src/`
-- [ ] T082 [P] Add loading spinners for async operations in `frontend/src/components/ui/loading.tsx`
-- [ ] T083 [P] Add success/error toast notifications in `frontend/src/components/ui/toast.tsx`
-- [ ] T084 Run ruff linting and fix issues in `backend/src/`
-- [ ] T085 [P] Run ESLint and fix issues in `frontend/src/`
-- [ ] T086 [P] Run mypy type checking in `backend/src/`
-- [ ] T087 [P] Verify TypeScript strict mode passes in `frontend/src/`
-- [ ] T088 Validate quickstart.md setup instructions work end-to-end
-- [ ] T089 Update README with project setup and usage
+- [x] T081 [P] Verify responsive design on mobile viewports in `frontend/src/`
+- [x] T082 [P] Add loading spinners for async operations in `frontend/src/components/ui/loading.tsx`
+- [x] T083 [P] Add success/error toast notifications in `frontend/src/components/ui/toast.tsx`
+- [x] T084 Run ruff linting and fix issues in `backend/src/`
+- [x] T085 [P] Run ESLint and fix issues in `frontend/src/`
+- [x] T086 [P] Run mypy type checking in `backend/src/`
+- [x] T087 [P] Verify TypeScript strict mode passes in `frontend/src/`
+- [x] T088 Validate quickstart.md setup instructions work end-to-end
+- [x] T089 Update README with project setup and usage
 
 ---
 

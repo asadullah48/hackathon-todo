@@ -19,27 +19,27 @@ wheels/
 *.egg-info/
 .installed.cfg
 *.egg
-
-# Virtual environments
 .venv/
 venv/
 ENV/
-env/
+.uv/
+
+# Environment
+.env
+.env.local
 
 # Testing
-.pytest_cache/
+coverage/
 .coverage
 htmlcov/
-.tox/
-.nox/
+.pytest_cache/
 
 # Type checking
 .mypy_cache/
-.pytype/
 
 # IDE
-.idea/
 .vscode/
+.idea/
 *.swp
 *.swo
 *~
@@ -48,29 +48,5 @@ htmlcov/
 .DS_Store
 Thumbs.db
 
-# Environment
-.env
-.env.local
-*.local
-
 # Logs
 *.log
-
-# UV package manager
-.uv/
-uv.lock
-
-# Node.js
-node_modules/
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-.pnpm-debug.log*
-
-# Next.js
-.next/
-out/
-build/
-
-# Testing
-coverage/
