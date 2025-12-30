@@ -74,3 +74,4 @@ build/
 
 # Testing
 coverage/
+.claude/skills/hackathon-todo-advanced/
