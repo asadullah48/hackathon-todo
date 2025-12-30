@@ -1,0 +1,1 @@
+.claude/skills/hackathon-todo-advanced/scripts/generate_helm_charts.py
