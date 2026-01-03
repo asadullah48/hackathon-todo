@@ -1,19 +1,24 @@
 <!--
 Sync Impact Report
 ==================
-Version change: 1.0.0 → 2.0.0 (MAJOR - Phase II expansion)
+Version change: 2.0.0 → 3.0.0 (MAJOR - Phase III AI/MCP expansion)
 Modified principles:
-  - III. Simplicity First → Updated to clarify Phase I vs Phase II dependency scope
+  - III. Simplicity First → Updated to include Phase III AI dependencies
 Added sections:
-  - VII. API-First Design (Phase II)
-  - VIII. Full-Stack Standards (Phase II)
-  - Phase II Technology Stack (Frontend, Backend, Database, Auth, Deployment)
+  - IX. AI Integration Standards (Phase III)
+  - Phase III Technology Stack (MCP, OpenAI Agents, Chat Infrastructure)
 Removed sections: None
 Templates requiring updates:
-  - plan-template.md: ✅ Compatible (already supports web app structure)
+  - plan-template.md: ✅ Compatible (supports AI agent patterns)
   - spec-template.md: ✅ Compatible (no constitution-specific changes needed)
-  - tasks-template.md: ✅ Compatible (already supports frontend/backend split)
+  - tasks-template.md: ✅ Compatible (supports AI feature split)
 Follow-up TODOs: None
+
+Previous Sync (2.0.0):
+- III. Simplicity First → Updated to clarify Phase I vs Phase II dependency scope
+- VII. API-First Design (Phase II)
+- VIII. Full-Stack Standards (Phase II)
+- Phase II Technology Stack (Frontend, Backend, Database, Auth, Deployment)
 -->
 
 # Hackathon Todo Constitution
@@ -54,8 +59,10 @@ Use appropriate dependencies for each phase. Phase I uses standard library only;
 - Phase I Data storage: Python dict/list in-memory structures
 - Phase II: Approved dependencies only (see Technology Stack section)
 - Phase II Data storage: PostgreSQL via SQLModel ORM
+- Phase III: AI dependencies approved for chatbot functionality (MCP, OpenAI)
+- Phase III: Stateless conversation management via database persistence
 - New dependencies require explicit justification and ADR
-- YAGNI (You Aren't Gonna Need It) principle applies to both phases
+- YAGNI (You Aren't Gonna Need It) principle applies to all phases
 
 ### IV. Modular Architecture
 
@@ -122,6 +129,22 @@ Adhere to modern full-stack development patterns for web applications.
 - Environment variables for all configuration (no hardcoded secrets)
 - Responsive design MUST work on mobile and desktop
 
+### IX. AI Integration Standards (Phase III)
+
+Implement AI-powered features using standardized protocols and approved AI providers.
+
+**Rationale**: AI integration requires careful design to ensure reliability, graceful degradation, and maintainability. Using standardized protocols (MCP) enables interoperability and future flexibility.
+
+**Rules**:
+- Model Context Protocol (MCP) MUST be used for tool exposure to AI agents
+- MCP server runs as subprocess with stdio communication
+- OpenAI Agents SDK for AI reasoning and tool orchestration
+- Stateless chat endpoint: conversation state MUST persist in database, not memory
+- Graceful degradation: MockAgent MUST be available when AI provider unavailable
+- All AI interactions MUST be logged for debugging and audit
+- API keys MUST be stored in environment variables, never in code
+- Token usage and costs SHOULD be monitored
+
 ## Technology Stack
 
 ### Phase I (CLI Application)
@@ -162,6 +185,31 @@ Adhere to modern full-stack development patterns for web applications.
 - Backend: Render or Railway
 - Database: Neon (managed PostgreSQL)
 
+### Phase III (AI-Powered Chatbot)
+
+**AI Infrastructure**:
+- MCP (Model Context Protocol) >= 1.25.0 for tool standardization
+- OpenAI SDK >= 2.14.0 for AI agent orchestration
+- stdio subprocess communication for MCP server
+
+**Chat Backend**:
+- Conversation and Message models (SQLModel)
+- ConversationService for state management
+- Stateless chat API endpoint
+- MockTodoAgent fallback for graceful degradation
+
+**Chat Frontend**:
+- Custom ChatContainer component
+- Real-time message display
+- Quick action buttons for common tasks
+- Loading states and error handling
+
+**Architecture Pattern**:
+- MCP server exposes 5 tools: add_task, list_tasks, complete_task, delete_task, update_task
+- TodoAgent connects OpenAI to MCP tools via stdio
+- Chat endpoint: load conversation → run agent → persist response
+- JWT authentication for all chat endpoints
+
 ## Development Workflow
 
 ### Code Review Requirements
@@ -200,4 +248,4 @@ This constitution supersedes all other practices. It defines the non-negotiable 
 - Complexity MUST be justified against Simplicity First principle
 - Runtime guidance in CLAUDE.md for agent-specific instructions
 
-**Version**: 2.0.0 | **Ratified**: 2025-12-27 | **Last Amended**: 2025-12-28
+**Version**: 3.0.0 | **Ratified**: 2025-12-27 | **Last Amended**: 2026-01-03

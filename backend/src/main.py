@@ -1,7 +1,7 @@
 """FastAPI application entry point."""
 
+from collections.abc import AsyncGenerator
 from contextlib import asynccontextmanager
-from typing import AsyncGenerator
 
 from fastapi import FastAPI, Request, status
 from fastapi.middleware.cors import CORSMiddleware
@@ -9,6 +9,7 @@ from fastapi.responses import JSONResponse
 from pydantic import ValidationError
 
 from src.api.auth import router as auth_router
+from src.api.chat import router as chat_router
 from src.api.tasks import router as tasks_router
 from src.config import get_settings
 from src.database import init_db
@@ -62,6 +63,10 @@ Tokens are valid for 7 days after login.
             "name": "Tasks",
             "description": "CRUD operations for todo items",
         },
+        {
+            "name": "chat",
+            "description": "AI-powered chatbot for task management",
+        },
     ],
 )
 
@@ -114,10 +119,7 @@ async def general_exception_handler(
     exc: Exception,
 ) -> JSONResponse:
     """Handle uncaught exceptions."""
-    if settings.debug:
-        message = str(exc)
-    else:
-        message = "An unexpected error occurred"
+    message = str(exc) if settings.debug else "An unexpected error occurred"
 
     return JSONResponse(
         status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
@@ -131,6 +133,7 @@ async def general_exception_handler(
 # Register API routers
 app.include_router(auth_router, prefix="/api")
 app.include_router(tasks_router, prefix="/api")
+app.include_router(chat_router)  # /api/chat prefix is defined in router
 
 
 @app.get("/health")

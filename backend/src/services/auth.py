@@ -84,9 +84,9 @@ class AuthService:
         return result.scalar_one_or_none()
 
     def create_auth_response(
-        self, 
-        user: User, 
-        token: str, 
+        self,
+        user: User,
+        token: str,
         expires_at: datetime
     ) -> dict:
         """Create authentication response dict matching AuthResponse schema."""

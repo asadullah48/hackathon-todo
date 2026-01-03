@@ -1,7 +1,9 @@
 """Security utilities for password hashing and JWT tokens."""
-from datetime import datetime, timedelta, timezone
+from datetime import UTC, datetime, timedelta
+
 import bcrypt
-from jose import jwt, JWTError
+from jose import JWTError, jwt
+
 from src.config import get_settings
 
 settings = get_settings()
@@ -23,12 +25,12 @@ def verify_password(plain_password: str, hashed_password: str) -> bool:
 def create_access_token(data: dict[str, str]) -> tuple[str, datetime]:
     """Create a JWT access token."""
     to_encode = data.copy()
-    expire = datetime.now(timezone.utc) + timedelta(days=settings.jwt_expiry_days)
-    
+    expire = datetime.now(UTC) + timedelta(days=settings.jwt_expiry_days)
+
     # Use 'sub' (subject) for user_id as per JWT standard
     if "user_id" in to_encode:
         to_encode["sub"] = to_encode.pop("user_id")
-    
+
     to_encode.update({"exp": expire})
     encoded_jwt = jwt.encode(
         to_encode,
@@ -40,7 +42,7 @@ def create_access_token(data: dict[str, str]) -> tuple[str, datetime]:
 
 def get_token_expiry() -> datetime:
     """Get the expiry datetime for a new token."""
-    return datetime.now(timezone.utc) + timedelta(days=settings.jwt_expiry_days)
+    return datetime.now(UTC) + timedelta(days=settings.jwt_expiry_days)
 
 
 def decode_access_token(token: str) -> dict[str, str] | None:

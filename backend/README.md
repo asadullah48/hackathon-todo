@@ -1,25 +1,28 @@
-# Backend - FastAPI Todo API
+---
+title: Hackathon Todo Backend
+emoji: 📝
+colorFrom: blue
+colorTo: green
+sdk: docker
+app_port: 8000
+---
 
-Backend API for Phase II Todo Application.
+# Hackathon Todo Backend
 
-## Tech Stack
-- FastAPI
-- SQLModel
-- Neon PostgreSQL
-- Better Auth JWT
+FastAPI backend for todo application with JWT authentication.
 
-## Setup
-```bash
-uv sync
-uv run alembic upgrade head
-uv run uvicorn src.main:app --reload
-```
+## Features
+- User authentication (JWT)
+- Task CRUD operations
+- PostgreSQL database (Neon)
+- RESTful API
 
-## API Endpoints
-- POST /api/auth/register
-- POST /api/auth/login
-- GET /api/{user_id}/tasks
-- POST /api/{user_id}/tasks
-- PUT /api/{user_id}/tasks/{id}
-- DELETE /api/{user_id}/tasks/{id}
-- PATCH /api/{user_id}/tasks/{id}/complete
+## Endpoints
+- `GET /health` - Health check
+- `GET /docs` - API documentation
+- `POST /api/auth/register` - User registration
+- `POST /api/auth/login` - User login
+- `GET /api/tasks` - List tasks
+- `POST /api/tasks` - Create task
+- `PUT /api/tasks/{id}` - Update task
+- `DELETE /api/tasks/{id}` - Delete task

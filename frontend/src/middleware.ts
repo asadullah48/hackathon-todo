@@ -2,13 +2,13 @@ import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
 // Routes that require authentication
-const protectedRoutes = ["/tasks"];
+const _protectedRoutes = ["/tasks"];
 
 // Routes that should redirect to /tasks if authenticated
-const authRoutes = ["/login", "/register"];
+const _authRoutes = ["/login", "/register"];
 
 export function middleware(request: NextRequest) {
-  const { pathname } = request.nextUrl;
+  const { pathname: _pathname } = request.nextUrl;
 
   // Check for auth token in cookies (Better Auth stores it there)
   // For localStorage-based auth, we handle this on the client side

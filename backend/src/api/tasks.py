@@ -1,6 +1,5 @@
 """Task API endpoints."""
 
-from typing import Optional
 from uuid import UUID
 
 from fastapi import APIRouter, HTTPException, Query, status
@@ -25,7 +24,7 @@ async def list_tasks(
     current_user_id: CurrentUserDep,
     page: int = Query(default=1, ge=1),
     page_size: int = Query(default=50, ge=1, le=100),
-    is_completed: Optional[bool] = Query(default=None),
+    is_completed: bool | None = Query(default=None),
 ) -> TaskListResponse:
     """List all tasks for the authenticated user."""
     service = TaskService(session, current_user_id)

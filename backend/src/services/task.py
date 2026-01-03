@@ -1,6 +1,5 @@
 """Task service for CRUD operations."""
 
-from typing import Optional
 from uuid import UUID
 
 from sqlalchemy import func
@@ -34,7 +33,7 @@ class TaskService:
         self,
         page: int = 1,
         page_size: int = 50,
-        is_completed: Optional[bool] = None,
+        is_completed: bool | None = None,
     ) -> TaskListResponse:
         """List all tasks for the current user."""
         # Build query
@@ -64,7 +63,7 @@ class TaskService:
             page_size=page_size,
         )
 
-    async def get(self, task_id: UUID) -> Optional[Task]:
+    async def get(self, task_id: UUID) -> Task | None:
         """Get a task by ID for the current user."""
         statement = select(Task).where(
             Task.id == task_id,
@@ -73,7 +72,7 @@ class TaskService:
         result = await self.session.execute(statement)
         return result.scalar_one_or_none()
 
-    async def update(self, task_id: UUID, data: TaskUpdate) -> Optional[Task]:
+    async def update(self, task_id: UUID, data: TaskUpdate) -> Task | None:
         """Update a task."""
         task = await self.get(task_id)
         if not task:
@@ -98,7 +97,7 @@ class TaskService:
         await self.session.flush()
         return True
 
-    async def toggle(self, task_id: UUID) -> Optional[Task]:
+    async def toggle(self, task_id: UUID) -> Task | None:
         """Toggle task completion status."""
         task = await self.get(task_id)
         if not task:

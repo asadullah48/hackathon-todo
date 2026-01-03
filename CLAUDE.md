@@ -6,9 +6,9 @@ This is a **Panaversity Hackathon II** project following **spec-driven developme
 
 ### Current Status
 
-**Phase 1**: ✅ Complete - Python CLI app tested  
-**Phase 2**: 🔄 Backend tested, Frontend in testing  
-**Phase 3**: 🎯 Next - MCP + OpenAI Agents + ChatKit
+**Phase 1**: ✅ Complete - Python CLI app tested
+**Phase 2**: ✅ Complete - Full-stack web app deployed
+**Phase 3**: 🔄 In Progress - MCP + OpenAI Agents + Custom Chat UI
 
 ## SpecifyKit Plus Workflow
 
@@ -99,3 +99,18 @@ hackathon-todo/
 4. Check architecture diagrams
 
 Good luck! 🚀
+
+## Recent Changes
+
+- 003-chat-mcp-server: Phase 3 AI chatbot with MCP + OpenAI
+  - Backend: MCP server, TodoAgent, ConversationService, chat API
+  - Frontend: Custom ChatContainer, chat page
+  - Database: conversations + messages tables
+  - Dependencies: mcp>=1.25.0, openai>=2.14.0
+
+## Phase 3 Technology Stack
+
+- **MCP**: Model Context Protocol for tool standardization
+- **OpenAI SDK**: AI agent with function calling (gpt-4o-mini)
+- **MockTodoAgent**: Fallback when API unavailable
+- **Stateless Design**: DB-backed conversations

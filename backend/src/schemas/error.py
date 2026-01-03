@@ -1,6 +1,5 @@
 """Error response schemas for API."""
 
-from typing import Optional
 
 from pydantic import BaseModel
 
@@ -10,7 +9,7 @@ class ErrorResponse(BaseModel):
 
     code: str
     message: str
-    details: Optional[dict[str, str]] = None
+    details: dict[str, str] | None = None
 
 
 class ErrorCode:

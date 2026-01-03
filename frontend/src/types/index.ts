@@ -59,3 +59,41 @@ export interface ApiError {
 export type ApiResult<T> =
   | { success: true; data: T }
   | { success: false; error: ApiError };
+
+// Chat types for Phase 3
+export interface ToolCallInfo {
+  tool_name: string;
+  arguments: Record<string, unknown>;
+  result: string;
+}
+
+export interface ChatRequest {
+  conversation_id?: string;
+  message: string;
+}
+
+export interface ChatResponse {
+  conversation_id: string;
+  response: string;
+  tool_calls: ToolCallInfo[];
+}
+
+export interface Message {
+  id: string;
+  role: "user" | "assistant" | "system";
+  content: string;
+  created_at: string;
+}
+
+export interface Conversation {
+  id: string;
+  user_id: string;
+  created_at: string;
+  updated_at: string;
+  messages: Message[];
+}
+
+export interface ConversationListResponse {
+  conversations: Conversation[];
+  total: number;
+}

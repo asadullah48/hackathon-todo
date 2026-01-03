@@ -1,34 +1,30 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
 import { getCurrentUser, signOut, getAuthToken } from '@/lib/auth'
 
+interface User {
+  id: string
+  email: string
+  name?: string
+}
+
+interface Task {
+  id: number
+  title: string
+  description?: string
+  completed: boolean
+}
+
 export default function TasksPage() {
-  const [user, setUser] = useState<any>(null)
-  const [tasks, setTasks] = useState<any[]>([])
+  const [user, setUser] = useState<User | null>(null)
+  const [tasks, setTasks] = useState<Task[]>([])
   const [newTask, setNewTask] = useState('')
   const [loading, setLoading] = useState(true)
   const router = useRouter()
 
-  useEffect(() => {
-    loadUser()
-  }, [])
-
-  const loadUser = async () => {
-    const { data } = await getCurrentUser()
-    
-    if (!data) {
-      router.push('/login')
-      return
-    }
-
-    setUser(data)
-    await loadTasks()
-    setLoading(false)
-  }
-
-  const loadTasks = async () => {
+  const loadTasks = useCallback(async () => {
     try {
       const token = getAuthToken()
       const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/tasks`, {
@@ -41,7 +37,24 @@ export default function TasksPage() {
     } catch (err) {
       console.error('Load tasks error:', err)
     }
-  }
+  }, [])
+
+  const loadUser = useCallback(async () => {
+    const { data } = await getCurrentUser()
+
+    if (!data) {
+      router.push('/login')
+      return
+    }
+
+    setUser(data)
+    await loadTasks()
+    setLoading(false)
+  }, [router, loadTasks])
+
+  useEffect(() => {
+    loadUser()
+  }, [loadUser])
 
   const handleAddTask = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -110,7 +123,23 @@ export default function TasksPage() {
     <div className="min-h-screen bg-gray-50">
       <header className="bg-white shadow">
         <div className="max-w-4xl mx-auto px-4 py-4 flex justify-between items-center">
-          <h1 className="text-2xl font-bold">My Tasks</h1>
+          <div className="flex items-center gap-6">
+            <h1 className="text-2xl font-bold">My Tasks</h1>
+            <nav className="flex gap-4">
+              <a
+                href="/tasks"
+                className="text-blue-600 font-medium"
+              >
+                Tasks
+              </a>
+              <a
+                href="/chat"
+                className="text-gray-600 hover:text-blue-600 transition-colors"
+              >
+                AI Chat
+              </a>
+            </nav>
+          </div>
           <div className="flex items-center gap-4">
             <span className="text-sm text-gray-600">{user?.email}</span>
             <button
@@ -152,7 +181,7 @@ export default function TasksPage() {
             </p>
           ) : (
             <ul className="space-y-2">
-              {tasks.map((task: any) => (
+              {tasks.map((task: Task) => (
                 <li
                   key={task.id}
                   className="flex items-center gap-3 p-3 border rounded-md hover:bg-gray-50"
