@@ -4,5 +4,4 @@ __pycache__
 .venv
 .git
 .gitignore
-README.md
 tests/
