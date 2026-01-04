@@ -23,3 +23,7 @@ frontend:
 ingress:
   enabled: true
   host: todo.local
+
+redpanda:
+  enabled: true
+  storage: 1Gi
