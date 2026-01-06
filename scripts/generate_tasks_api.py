@@ -1,4 +1,14 @@
-"""Task API endpoints."""
+#!/usr/bin/env python3
+"""
+Code generator for Task API endpoints.
+
+Generates backend/src/api/tasks.py
+"""
+
+from pathlib import Path
+
+
+TASKS_API_TEMPLATE = '''"""Task API endpoints."""
 
 import asyncio
 from datetime import datetime, timezone
@@ -298,3 +308,16 @@ async def toggle_task(
         )
 
     return TaskResponse.model_validate(task)
+'''
+
+
+def generate_tasks_api():
+    """Generate the Tasks API file."""
+    base_dir = Path(__file__).parent.parent
+    output_path = base_dir / "backend" / "src" / "api" / "tasks.py"
+    output_path.write_text(TASKS_API_TEMPLATE.strip() + "\n")
+    print(f"Generated: {output_path}")
+
+
+if __name__ == "__main__":
+    generate_tasks_api()

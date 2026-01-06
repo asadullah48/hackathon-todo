@@ -1,120 +1,16 @@
-"""Unit tests for SQLModel validation and Pydantic schemas."""
+"""Unit tests for SQLModel validation and Pydantic schemas.
+
+Note: SQLModel models defer validation to database layer.
+Pydantic schemas validate at construction time.
+"""
 
 import pytest
 from datetime import datetime
 from uuid import uuid4
 
 
-class TestTaskModelValidation:
-    """Unit tests for Task model validation."""
-
-    def test_task_requires_title(self):
-        """Task title is required."""
-        from src.models.task import Task
-        from pydantic import ValidationError
-
-        with pytest.raises(ValidationError):
-            Task(
-                user_id=uuid4(),
-                title="",  # Empty title should fail
-            )
-
-    def test_task_title_max_length(self):
-        """Task title cannot exceed 200 characters."""
-        from src.models.task import Task
-
-        # 200 chars should work
-        task = Task(
-            user_id=uuid4(),
-            title="a" * 200,
-        )
-        assert len(task.title) == 200
-
-    def test_task_description_optional(self):
-        """Task description is optional."""
-        from src.models.task import Task
-
-        task = Task(
-            user_id=uuid4(),
-            title="Test task",
-        )
-        assert task.description is None
-
-    def test_task_description_max_length(self):
-        """Task description cannot exceed 1000 characters."""
-        from src.models.task import Task
-        from pydantic import ValidationError
-
-        with pytest.raises(ValidationError):
-            Task(
-                user_id=uuid4(),
-                title="Test",
-                description="b" * 1001,
-            )
-
-    def test_task_defaults_to_incomplete(self):
-        """New tasks default to is_completed=False."""
-        from src.models.task import Task
-
-        task = Task(
-            user_id=uuid4(),
-            title="Test task",
-        )
-        assert task.is_completed is False
-
-    def test_task_has_timestamps(self):
-        """Task has created_at and updated_at timestamps."""
-        from src.models.task import Task
-
-        task = Task(
-            user_id=uuid4(),
-            title="Test task",
-        )
-        assert task.created_at is not None
-        assert task.updated_at is not None
-        assert isinstance(task.created_at, datetime)
-        assert isinstance(task.updated_at, datetime)
-
-
-class TestUserModelValidation:
-    """Unit tests for User model validation."""
-
-    def test_user_requires_email(self):
-        """User email is required."""
-        from src.models.user import User
-        from pydantic import ValidationError
-
-        with pytest.raises(ValidationError):
-            User(
-                email="",
-                hashed_password="hashedpassword",
-            )
-
-    def test_user_requires_hashed_password(self):
-        """User hashed_password is required."""
-        from src.models.user import User
-        from pydantic import ValidationError
-
-        with pytest.raises(ValidationError):
-            User(
-                email="test@example.com",
-                hashed_password="",
-            )
-
-    def test_user_has_timestamps(self):
-        """User has created_at and updated_at timestamps."""
-        from src.models.user import User
-
-        user = User(
-            email="test@example.com",
-            hashed_password="hashedpassword",
-        )
-        assert user.created_at is not None
-        assert user.updated_at is not None
-
-
 class TestTaskSchemas:
-    """Unit tests for Task Pydantic schemas."""
+    """Unit tests for Task Pydantic schemas (not SQLModel)."""
 
     def test_task_create_valid(self):
         """TaskCreate schema validates correctly."""
@@ -125,12 +21,62 @@ class TestTaskSchemas:
         assert task.description == "Optional description"
 
     def test_task_create_title_required(self):
-        """TaskCreate requires title."""
+        """TaskCreate requires title - empty string fails."""
         from src.schemas.task import TaskCreate
         from pydantic import ValidationError
 
         with pytest.raises(ValidationError):
             TaskCreate(title="")
+
+    def test_task_create_title_min_length(self):
+        """TaskCreate title min_length=1 allows whitespace (Pydantic behavior).
+
+        Note: Pydantic's min_length=1 allows whitespace-only strings.
+        Validation of meaningful content is done at API/service layer.
+        """
+        from src.schemas.task import TaskCreate
+
+        # Whitespace-only passes Pydantic validation (min_length=1)
+        # Real validation happens at API level or service layer
+        task = TaskCreate(title="   ")
+        assert task.title == "   "  # Pydantic allows this
+
+    def test_task_create_title_max_length(self):
+        """TaskCreate title max 200 characters."""
+        from src.schemas.task import TaskCreate
+
+        task = TaskCreate(title="a" * 200)
+        assert len(task.title) == 200
+
+    def test_task_create_title_exceeds_max(self):
+        """TaskCreate title > 200 characters fails."""
+        from src.schemas.task import TaskCreate
+        from pydantic import ValidationError
+
+        with pytest.raises(ValidationError):
+            TaskCreate(title="a" * 201)
+
+    def test_task_create_description_optional(self):
+        """TaskCreate description is optional."""
+        from src.schemas.task import TaskCreate
+
+        task = TaskCreate(title="Test")
+        assert task.description is None
+
+    def test_task_create_description_max_length(self):
+        """TaskCreate description max 1000 characters."""
+        from src.schemas.task import TaskCreate
+
+        task = TaskCreate(title="Test", description="b" * 1000)
+        assert len(task.description) == 1000
+
+    def test_task_create_description_exceeds_max(self):
+        """TaskCreate description > 1000 characters fails."""
+        from src.schemas.task import TaskCreate
+        from pydantic import ValidationError
+
+        with pytest.raises(ValidationError):
+            TaskCreate(title="Test", description="b" * 1001)
 
     def test_task_update_partial(self):
         """TaskUpdate allows partial updates."""
@@ -140,26 +86,47 @@ class TestTaskSchemas:
         assert update.title == "New title"
         assert update.description is None  # Not provided
 
-    def test_task_response_has_all_fields(self):
-        """TaskResponse includes all required fields."""
+    def test_task_response_with_all_fields(self):
+        """TaskResponse includes all fields including Phase 5."""
         from src.schemas.task import TaskResponse
-        from uuid import uuid4
-        from datetime import datetime
 
         task_id = uuid4()
         now = datetime.utcnow()
 
         response = TaskResponse(
             id=task_id,
+            user_id=uuid4(),
             title="Test",
             description=None,
             is_completed=False,
             created_at=now,
             updated_at=now,
+            due_date=None,
+            reminder_at=None,
+            recurrence_type=None,
+            recurrence_interval=1,
+            recurrence_end_date=None,
+            parent_task_id=None,
         )
         assert response.id == task_id
         assert response.title == "Test"
         assert response.is_completed is False
+        # Phase 5 fields
+        assert response.due_date is None
+        assert response.recurrence_interval == 1
+
+    def test_task_list_response(self):
+        """TaskListResponse format is correct (tasks + total only)."""
+        from src.schemas.task import TaskListResponse
+
+        response = TaskListResponse(
+            tasks=[],
+            total=0,
+        )
+        assert response.tasks == []
+        assert response.total == 0
+        # Note: Pagination fields (page, page_size) are not in the response
+        # The API uses query params for pagination, not response fields
 
 
 class TestUserSchemas:
@@ -181,6 +148,14 @@ class TestUserSchemas:
         with pytest.raises(ValidationError):
             UserCreate(email="not-an-email", password="password123")
 
+    def test_user_create_password_min_length(self):
+        """UserCreate password min 8 characters."""
+        from src.schemas.user import UserCreate
+        from pydantic import ValidationError
+
+        with pytest.raises(ValidationError):
+            UserCreate(email="test@example.com", password="short")
+
     def test_user_login_valid(self):
         """UserLogin schema validates correctly."""
         from src.schemas.user import UserLogin
@@ -188,6 +163,24 @@ class TestUserSchemas:
         login = UserLogin(email="test@example.com", password="password123")
         assert login.email == "test@example.com"
         assert login.password == "password123"
+
+    def test_user_response_has_required_fields(self):
+        """UserResponse includes id, email, created_at."""
+        from src.schemas.user import UserResponse
+        from uuid import uuid4
+        from datetime import datetime
+
+        user_id = uuid4()
+        now = datetime.utcnow()
+
+        response = UserResponse(
+            id=user_id,
+            email="test@example.com",
+            created_at=now,
+        )
+        assert response.id == user_id
+        assert response.email == "test@example.com"
+        assert response.created_at == now
 
     def test_auth_response_contains_token(self):
         """AuthResponse includes token, user, and expires_at."""
@@ -201,11 +194,41 @@ class TestUserSchemas:
             created_at=datetime.utcnow(),
         )
 
+        expires_at = datetime.utcnow()
+
         auth_response = AuthResponse(
             token="jwt-token-here",
             user=user_response,
-            expires_at=datetime.utcnow(),
+            expires_at=expires_at,
         )
         assert auth_response.token == "jwt-token-here"
         assert auth_response.user.email == "test@example.com"
-        assert auth_response.expires_at is not None
+        assert auth_response.expires_at == expires_at
+
+
+class TestErrorSchemas:
+    """Unit tests for Error schemas."""
+
+    def test_error_response_format(self):
+        """ErrorResponse has correct format."""
+        from src.schemas.error import ErrorResponse, ErrorCode
+
+        error = ErrorResponse(
+            code=ErrorCode.NOT_FOUND,
+            message="Task not found",
+        )
+        assert error.code == ErrorCode.NOT_FOUND
+        assert error.message == "Task not found"
+        assert error.details is None
+
+    def test_error_response_with_details(self):
+        """ErrorResponse can include details."""
+        from src.schemas.error import ErrorResponse, ErrorCode
+
+        error = ErrorResponse(
+            code=ErrorCode.VALIDATION_ERROR,
+            message="Invalid input",
+            details={"title": "Field required"},
+        )
+        assert error.code == ErrorCode.VALIDATION_ERROR
+        assert error.details == {"title": "Field required"}

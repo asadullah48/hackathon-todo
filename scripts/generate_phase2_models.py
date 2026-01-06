@@ -1,4 +1,16 @@
-"""Task database model."""
+#!/usr/bin/env python3
+"""
+Code generator for Phase 2 data model.
+
+Reads specs/002-web-todo-app/data-model.md and generates:
+- backend/src/models/task.py
+- backend/src/models/user.py
+"""
+
+from pathlib import Path
+
+
+TASK_MODEL_TEMPLATE = '''"""Task database model."""
 from datetime import datetime
 from typing import Optional
 from uuid import UUID, uuid4
@@ -38,3 +50,17 @@ class Task(SQLModel, table=True):
     def update_timestamp(self):
         """Update the updated_at timestamp."""
         self.updated_at = datetime.utcnow()
+'''
+
+
+def generate_task_model():
+    """Generate the Task model file."""
+    # Output to backend/src/models/task.py
+    base_dir = Path(__file__).parent.parent
+    output_path = base_dir / "backend" / "src" / "models" / "task.py"
+    output_path.write_text(TASK_MODEL_TEMPLATE.strip() + "\n")
+    print(f"Generated: {output_path}")
+
+
+if __name__ == "__main__":
+    generate_task_model()
