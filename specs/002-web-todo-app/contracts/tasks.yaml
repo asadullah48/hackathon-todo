@@ -1,0 +1,475 @@
+openapi: 3.1.0
+info:
+  title: Todo App Tasks API
+  version: 1.0.0
+  description: Task CRUD endpoints for managing todo items.
+
+servers:
+  - url: /api/v1
+    description: API v1
+
+paths:
+  /tasks:
+    get:
+      operationId: listTasks
+      summary: List all tasks
+      description: Get all tasks for the authenticated user.
+      tags:
+        - Tasks
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: page
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+            default: 1
+          description: Page number for pagination
+        - name: page_size
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 50
+          description: Number of tasks per page
+        - name: is_completed
+          in: query
+          schema:
+            type: boolean
+          description: Filter by completion status
+      responses:
+        '200':
+          description: List of tasks
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TaskListResponse'
+              examples:
+                withTasks:
+                  summary: User has tasks
+                  value:
+                    tasks:
+                      - id: "550e8400-e29b-41d4-a716-446655440001"
+                        title: "Buy groceries"
+                        description: "Milk, eggs, bread"
+                        isCompleted: false
+                        createdAt: "2025-12-28T10:00:00Z"
+                        updatedAt: "2025-12-28T10:00:00Z"
+                      - id: "550e8400-e29b-41d4-a716-446655440002"
+                        title: "Call mom"
+                        description: null
+                        isCompleted: true
+                        createdAt: "2025-12-27T15:30:00Z"
+                        updatedAt: "2025-12-28T09:00:00Z"
+                    total: 2
+                    page: 1
+                    pageSize: 50
+                empty:
+                  summary: User has no tasks
+                  value:
+                    tasks: []
+                    total: 0
+                    page: 1
+                    pageSize: 50
+        '401':
+          description: Not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+    post:
+      operationId: createTask
+      summary: Create a new task
+      description: Create a new task for the authenticated user.
+      tags:
+        - Tasks
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TaskCreate'
+            examples:
+              withDescription:
+                summary: Task with description
+                value:
+                  title: "Buy groceries"
+                  description: "Milk, eggs, bread"
+              withoutDescription:
+                summary: Task without description
+                value:
+                  title: "Call mom"
+      responses:
+        '201':
+          description: Task created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TaskResponse'
+        '400':
+          description: Invalid input
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                emptyTitle:
+                  summary: Empty title
+                  value:
+                    code: "VALIDATION_ERROR"
+                    message: "Title is required"
+                    details:
+                      title: "Title is required"
+                titleTooLong:
+                  summary: Title too long
+                  value:
+                    code: "VALIDATION_ERROR"
+                    message: "Title must be 200 characters or less"
+                    details:
+                      title: "Title must be 200 characters or less"
+        '401':
+          description: Not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /tasks/{taskId}:
+    parameters:
+      - name: taskId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+        description: Unique task identifier
+
+    get:
+      operationId: getTask
+      summary: Get a task
+      description: Get a specific task by ID.
+      tags:
+        - Tasks
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: Task details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TaskResponse'
+        '401':
+          description: Not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Task belongs to another user
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                forbidden:
+                  summary: Access denied
+                  value:
+                    code: "FORBIDDEN"
+                    message: "You do not have access to this task"
+        '404':
+          description: Task not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                notFound:
+                  summary: Task does not exist
+                  value:
+                    code: "NOT_FOUND"
+                    message: "Task not found"
+
+    put:
+      operationId: updateTask
+      summary: Update a task
+      description: Update a task's title and/or description.
+      tags:
+        - Tasks
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TaskUpdate'
+            examples:
+              updateTitle:
+                summary: Update title only
+                value:
+                  title: "Buy groceries today"
+              updateDescription:
+                summary: Update description only
+                value:
+                  description: "Milk, eggs, bread, cheese"
+              updateBoth:
+                summary: Update both fields
+                value:
+                  title: "Buy groceries today"
+                  description: "Milk, eggs, bread, cheese"
+      responses:
+        '200':
+          description: Task updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TaskResponse'
+        '400':
+          description: Invalid input
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Task belongs to another user
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Task not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+    delete:
+      operationId: deleteTask
+      summary: Delete a task
+      description: Permanently delete a task.
+      tags:
+        - Tasks
+      security:
+        - BearerAuth: []
+      responses:
+        '204':
+          description: Task deleted successfully (no content)
+        '401':
+          description: Not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Task belongs to another user
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Task not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /tasks/{taskId}/toggle:
+    parameters:
+      - name: taskId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+        description: Unique task identifier
+
+    patch:
+      operationId: toggleTask
+      summary: Toggle task completion
+      description: Toggle the completion status of a task.
+      tags:
+        - Tasks
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: Task toggled successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TaskResponse'
+              examples:
+                nowCompleted:
+                  summary: Task marked as completed
+                  value:
+                    id: "550e8400-e29b-41d4-a716-446655440001"
+                    title: "Buy groceries"
+                    description: "Milk, eggs, bread"
+                    isCompleted: true
+                    createdAt: "2025-12-28T10:00:00Z"
+                    updatedAt: "2025-12-28T11:30:00Z"
+                nowIncomplete:
+                  summary: Task marked as incomplete
+                  value:
+                    id: "550e8400-e29b-41d4-a716-446655440001"
+                    title: "Buy groceries"
+                    description: "Milk, eggs, bread"
+                    isCompleted: false
+                    createdAt: "2025-12-28T10:00:00Z"
+                    updatedAt: "2025-12-28T11:30:00Z"
+        '401':
+          description: Not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Task belongs to another user
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Task not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: JWT token with 7-day expiry
+
+  schemas:
+    TaskCreate:
+      type: object
+      required:
+        - title
+      properties:
+        title:
+          type: string
+          minLength: 1
+          maxLength: 200
+          description: Task title
+          example: "Buy groceries"
+        description:
+          type: string
+          maxLength: 1000
+          nullable: true
+          description: Optional task description
+          example: "Milk, eggs, bread"
+
+    TaskUpdate:
+      type: object
+      properties:
+        title:
+          type: string
+          minLength: 1
+          maxLength: 200
+          description: Updated task title
+          example: "Buy groceries today"
+        description:
+          type: string
+          maxLength: 1000
+          nullable: true
+          description: Updated task description
+          example: "Milk, eggs, bread, cheese"
+
+    TaskResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: Unique task identifier
+          example: "550e8400-e29b-41d4-a716-446655440001"
+        title:
+          type: string
+          description: Task title
+          example: "Buy groceries"
+        description:
+          type: string
+          nullable: true
+          description: Task description
+          example: "Milk, eggs, bread"
+        isCompleted:
+          type: boolean
+          description: Completion status
+          example: false
+        createdAt:
+          type: string
+          format: date-time
+          description: Creation timestamp
+          example: "2025-12-28T10:00:00Z"
+        updatedAt:
+          type: string
+          format: date-time
+          description: Last update timestamp
+          example: "2025-12-28T10:00:00Z"
+
+    TaskListResponse:
+      type: object
+      properties:
+        tasks:
+          type: array
+          items:
+            $ref: '#/components/schemas/TaskResponse'
+          description: List of tasks
+        total:
+          type: integer
+          description: Total number of tasks
+          example: 42
+        page:
+          type: integer
+          description: Current page number
+          example: 1
+        pageSize:
+          type: integer
+          description: Number of tasks per page
+          example: 50
+
+    ErrorResponse:
+      type: object
+      required:
+        - code
+        - message
+      properties:
+        code:
+          type: string
+          description: Machine-readable error code
+          enum:
+            - VALIDATION_ERROR
+            - UNAUTHORIZED
+            - FORBIDDEN
+            - NOT_FOUND
+            - INTERNAL_ERROR
+          example: "NOT_FOUND"
+        message:
+          type: string
+          description: Human-readable error message
+          example: "Task not found"
+        details:
+          type: object
+          additionalProperties:
+            type: string
+          description: Field-specific error details
+
+tags:
+  - name: Tasks
+    description: Task CRUD operations

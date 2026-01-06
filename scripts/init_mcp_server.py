@@ -1,0 +1,1 @@
+.claude/skills/hackathon-todo-advanced/scripts/init_mcp_server.py

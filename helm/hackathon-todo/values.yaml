@@ -1,0 +1,29 @@
+backend:
+  image:
+    repository: todo-backend
+    tag: latest
+    pullPolicy: Never
+  replicas: 1
+  port: 8000
+  env:
+    DATABASE_URL: ""
+    OPENAI_API_KEY: ""
+    BETTER_AUTH_SECRET: ""
+
+frontend:
+  image:
+    repository: todo-frontend
+    tag: latest
+    pullPolicy: Never
+  replicas: 1
+  port: 3000
+  env:
+    NEXT_PUBLIC_API_URL: "http://backend-service:8000"
+
+ingress:
+  enabled: true
+  host: todo.local
+
+redpanda:
+  enabled: true
+  storage: 1Gi

@@ -1,0 +1,1 @@
+.claude/skills/hackathon-todo-advanced/scripts/test_mcp_connection.py

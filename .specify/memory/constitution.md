@@ -1,19 +1,24 @@
 <!--
 Sync Impact Report
 ==================
-Version change: 0.0.0 → 1.0.0 (Initial ratification)
-Modified principles: N/A (new constitution)
+Version change: 2.0.0 → 3.0.0 (MAJOR - Phase III AI/MCP expansion)
+Modified principles:
+  - III. Simplicity First → Updated to include Phase III AI dependencies
 Added sections:
-  - 6 Core Principles (Spec-Driven, Python Best Practices, Simplicity First, Modular Architecture, Type Safety, Test-Driven Mindset)
-  - Technology Stack section
-  - Development Workflow section
-  - Governance section
-Removed sections: N/A
+  - IX. AI Integration Standards (Phase III)
+  - Phase III Technology Stack (MCP, OpenAI Agents, Chat Infrastructure)
+Removed sections: None
 Templates requiring updates:
-  - plan-template.md: ✅ Compatible (references constitution check)
+  - plan-template.md: ✅ Compatible (supports AI agent patterns)
   - spec-template.md: ✅ Compatible (no constitution-specific changes needed)
-  - tasks-template.md: ✅ Compatible (no constitution-specific changes needed)
+  - tasks-template.md: ✅ Compatible (supports AI feature split)
 Follow-up TODOs: None
+
+Previous Sync (2.0.0):
+- III. Simplicity First → Updated to clarify Phase I vs Phase II dependency scope
+- VII. API-First Design (Phase II)
+- VIII. Full-Stack Standards (Phase II)
+- Phase II Technology Stack (Frontend, Backend, Database, Auth, Deployment)
 -->
 
 # Hackathon Todo Constitution
@@ -45,15 +50,19 @@ All Python code MUST follow PEP 8 style guidelines, use type hints, include docs
 
 ### III. Simplicity First
 
-Use Python standard library only for Phase I. No external dependencies. In-memory storage only.
+Use appropriate dependencies for each phase. Phase I uses standard library only; Phase II uses approved full-stack dependencies.
 
-**Rationale**: External dependencies add complexity, security risks, and maintenance burden. Starting simple ensures the core logic is sound before adding complexity.
+**Rationale**: External dependencies add complexity, security risks, and maintenance burden. Starting simple ensures the core logic is sound before adding complexity. Phase II expands scope with vetted dependencies for full-stack development.
 
 **Rules**:
 - Phase I: Standard library only (no pip install except dev tools)
-- Data storage: Python dict/list in-memory structures
-- External dependencies require explicit justification and ADR
-- YAGNI (You Aren't Gonna Need It) principle applies
+- Phase I Data storage: Python dict/list in-memory structures
+- Phase II: Approved dependencies only (see Technology Stack section)
+- Phase II Data storage: PostgreSQL via SQLModel ORM
+- Phase III: AI dependencies approved for chatbot functionality (MCP, OpenAI)
+- Phase III: Stateless conversation management via database persistence
+- New dependencies require explicit justification and ADR
+- YAGNI (You Aren't Gonna Need It) principle applies to all phases
 
 ### IV. Modular Architecture
 
@@ -91,16 +100,115 @@ Every feature MUST be testable. Write clear, maintainable code that can be verif
 - Side effects MUST be isolated and controllable
 - Tests SHOULD be written before or alongside implementation
 
+### VII. API-First Design (Phase II)
+
+Design APIs before implementation. All endpoints MUST have clear contracts and documentation.
+
+**Rationale**: API-first design ensures frontend and backend teams can work in parallel, enables automated testing, and provides self-documenting interfaces.
+
+**Rules**:
+- RESTful endpoints with clear HTTP semantics (GET reads, POST creates, PUT/PATCH updates, DELETE removes)
+- OpenAPI/Swagger documentation MUST be maintained for all endpoints
+- Stateless backend design: no server-side session storage
+- JWT-based authentication for all protected endpoints
+- API versioning strategy MUST be defined (path-based: /api/v1/)
+- Error responses MUST follow consistent structure with error codes
+
+### VIII. Full-Stack Standards (Phase II)
+
+Adhere to modern full-stack development patterns for web applications.
+
+**Rationale**: Consistent patterns across frontend and backend reduce cognitive load, improve maintainability, and leverage framework optimizations.
+
+**Rules**:
+- Frontend: Next.js App Router patterns MUST be followed
+- Server Components by default; Client Components only when interactivity required
+- TypeScript strict mode enabled for all frontend code
+- Tailwind CSS for styling (no custom CSS unless justified)
+- Better Auth for authentication flows
+- Environment variables for all configuration (no hardcoded secrets)
+- Responsive design MUST work on mobile and desktop
+
+### IX. AI Integration Standards (Phase III)
+
+Implement AI-powered features using standardized protocols and approved AI providers.
+
+**Rationale**: AI integration requires careful design to ensure reliability, graceful degradation, and maintainability. Using standardized protocols (MCP) enables interoperability and future flexibility.
+
+**Rules**:
+- Model Context Protocol (MCP) MUST be used for tool exposure to AI agents
+- MCP server runs as subprocess with stdio communication
+- OpenAI Agents SDK for AI reasoning and tool orchestration
+- Stateless chat endpoint: conversation state MUST persist in database, not memory
+- Graceful degradation: MockAgent MUST be available when AI provider unavailable
+- All AI interactions MUST be logged for debugging and audit
+- API keys MUST be stored in environment variables, never in code
+- Token usage and costs SHOULD be monitored
+
 ## Technology Stack
 
-**Language**: Python 3.13+
+### Phase I (CLI Application)
+
+**Language**: Python 3.12+
 **Package Manager**: UV
 **Runtime**: CPython
-**Frameworks**: None (standard library only for Phase I)
+**Frameworks**: None (standard library only)
 **Data Storage**: In-memory (list/dict)
 **Testing**: pytest (development dependency only)
 **Linting**: ruff (PEP 8 enforcement)
 **Type Checking**: mypy or pyright
+
+### Phase II (Full-Stack Web Application)
+
+**Frontend**:
+- Next.js 16+ with App Router
+- TypeScript 5.x (strict mode)
+- Tailwind CSS for styling
+- Better Auth for authentication
+
+**Backend**:
+- FastAPI for REST API
+- SQLModel for ORM
+- Pydantic for validation
+- Python 3.12+
+
+**Database**:
+- Neon PostgreSQL (serverless)
+- SQLModel migrations
+
+**Authentication**:
+- Better Auth
+- JWT tokens for API access
+
+**Deployment**:
+- Frontend: Vercel
+- Backend: Render or Railway
+- Database: Neon (managed PostgreSQL)
+
+### Phase III (AI-Powered Chatbot)
+
+**AI Infrastructure**:
+- MCP (Model Context Protocol) >= 1.25.0 for tool standardization
+- OpenAI SDK >= 2.14.0 for AI agent orchestration
+- stdio subprocess communication for MCP server
+
+**Chat Backend**:
+- Conversation and Message models (SQLModel)
+- ConversationService for state management
+- Stateless chat API endpoint
+- MockTodoAgent fallback for graceful degradation
+
+**Chat Frontend**:
+- Custom ChatContainer component
+- Real-time message display
+- Quick action buttons for common tasks
+- Loading states and error handling
+
+**Architecture Pattern**:
+- MCP server exposes 5 tools: add_task, list_tasks, complete_task, delete_task, update_task
+- TodoAgent connects OpenAI to MCP tools via stdio
+- Chat endpoint: load conversation → run agent → persist response
+- JWT authentication for all chat endpoints
 
 ## Development Workflow
 
@@ -140,4 +248,4 @@ This constitution supersedes all other practices. It defines the non-negotiable 
 - Complexity MUST be justified against Simplicity First principle
 - Runtime guidance in CLAUDE.md for agent-specific instructions
 
-**Version**: 1.0.0 | **Ratified**: 2025-12-27 | **Last Amended**: 2025-12-27
+**Version**: 3.0.0 | **Ratified**: 2025-12-27 | **Last Amended**: 2026-01-03

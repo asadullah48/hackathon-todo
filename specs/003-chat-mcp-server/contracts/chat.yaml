@@ -1,0 +1,354 @@
+openapi: 3.1.0
+info:
+  title: Chat MCP Server API
+  description: AI-powered chat API for natural language task management
+  version: 1.0.0
+  contact:
+    name: Hackathon Todo Team
+
+servers:
+  - url: /api
+    description: Backend API
+
+security:
+  - bearerAuth: []
+
+paths:
+  /chat:
+    post:
+      summary: Send chat message
+      description: |
+        Send a natural language message to the AI agent for task management.
+        The agent interprets the message and executes appropriate task operations.
+        Conversation state is persisted to database.
+      operationId: sendChatMessage
+      tags:
+        - Chat
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ChatRequest'
+            examples:
+              addTask:
+                summary: Add a task
+                value:
+                  message: "Add a task called 'Buy groceries'"
+                  conversation_id: null
+              listTasks:
+                summary: List tasks
+                value:
+                  message: "Show me my tasks"
+                  conversation_id: "550e8400-e29b-41d4-a716-446655440000"
+              completeTask:
+                summary: Complete a task
+                value:
+                  message: "Mark 'Buy groceries' as complete"
+                  conversation_id: "550e8400-e29b-41d4-a716-446655440000"
+      responses:
+        '200':
+          description: Chat response with AI message and tool calls
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ChatResponse'
+              examples:
+                taskCreated:
+                  summary: Task created response
+                  value:
+                    conversation_id: "550e8400-e29b-41d4-a716-446655440000"
+                    message: "I've created a task 'Buy groceries' for you."
+                    tool_calls:
+                      - name: "add_task"
+                        arguments:
+                          title: "Buy groceries"
+                          description: ""
+                        result:
+                          success: true
+                          task_id: "660e8400-e29b-41d4-a716-446655440001"
+                    created_at: "2026-01-03T12:00:00Z"
+        '400':
+          description: Invalid request (empty message, invalid conversation_id)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized (missing or invalid JWT)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Conversation not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error (AI provider failure)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /chat/conversations:
+    get:
+      summary: List user's conversations
+      description: Get all conversations for the authenticated user, ordered by most recent.
+      operationId: listConversations
+      tags:
+        - Chat
+      parameters:
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 20
+          description: Number of conversations to return
+        - name: offset
+          in: query
+          schema:
+            type: integer
+            minimum: 0
+            default: 0
+          description: Pagination offset
+      responses:
+        '200':
+          description: List of conversations
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConversationListResponse'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /chat/conversations/{conversation_id}:
+    get:
+      summary: Get conversation with messages
+      description: Get a specific conversation including all messages.
+      operationId: getConversation
+      tags:
+        - Chat
+      parameters:
+        - name: conversation_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: Conversation UUID
+      responses:
+        '200':
+          description: Conversation with messages
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConversationResponse'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Conversation not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+    delete:
+      summary: Delete conversation
+      description: Delete a conversation and all its messages.
+      operationId: deleteConversation
+      tags:
+        - Chat
+      parameters:
+        - name: conversation_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: Conversation UUID
+      responses:
+        '204':
+          description: Conversation deleted successfully
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Conversation not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: JWT token from Better Auth
+
+  schemas:
+    ChatRequest:
+      type: object
+      required:
+        - message
+      properties:
+        message:
+          type: string
+          minLength: 1
+          maxLength: 10000
+          description: Natural language message to AI agent
+        conversation_id:
+          type: string
+          format: uuid
+          nullable: true
+          description: Existing conversation ID to continue, or null for new conversation
+
+    ChatResponse:
+      type: object
+      required:
+        - conversation_id
+        - message
+        - created_at
+      properties:
+        conversation_id:
+          type: string
+          format: uuid
+          description: Conversation this message belongs to
+        message:
+          type: string
+          description: AI agent's response text
+        tool_calls:
+          type: array
+          items:
+            $ref: '#/components/schemas/ToolCallInfo'
+          description: List of tools the AI called to complete the request
+        created_at:
+          type: string
+          format: date-time
+          description: When the response was created
+
+    ToolCallInfo:
+      type: object
+      required:
+        - name
+        - arguments
+      properties:
+        name:
+          type: string
+          description: Name of the MCP tool called
+          enum:
+            - add_task
+            - list_tasks
+            - complete_task
+            - delete_task
+            - update_task
+        arguments:
+          type: object
+          additionalProperties: true
+          description: Arguments passed to the tool
+        result:
+          description: Result returned by the tool (structure varies by tool)
+          nullable: true
+
+    MessageResponse:
+      type: object
+      required:
+        - id
+        - role
+        - content
+        - created_at
+      properties:
+        id:
+          type: string
+          format: uuid
+        role:
+          type: string
+          enum:
+            - user
+            - assistant
+            - system
+        content:
+          type: string
+        tool_calls:
+          type: array
+          items:
+            $ref: '#/components/schemas/ToolCallInfo'
+          nullable: true
+        created_at:
+          type: string
+          format: date-time
+
+    ConversationResponse:
+      type: object
+      required:
+        - id
+        - created_at
+        - updated_at
+      properties:
+        id:
+          type: string
+          format: uuid
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+        messages:
+          type: array
+          items:
+            $ref: '#/components/schemas/MessageResponse'
+
+    ConversationListResponse:
+      type: object
+      required:
+        - conversations
+        - total
+      properties:
+        conversations:
+          type: array
+          items:
+            $ref: '#/components/schemas/ConversationResponse'
+        total:
+          type: integer
+          description: Total number of conversations for pagination
+
+    ErrorResponse:
+      type: object
+      required:
+        - detail
+      properties:
+        detail:
+          type: string
+          description: Human-readable error message
+        code:
+          type: string
+          description: Machine-readable error code
+          enum:
+            - UNAUTHORIZED
+            - INVALID_REQUEST
+            - NOT_FOUND
+            - AI_UNAVAILABLE
+            - RATE_LIMITED
+            - INTERNAL_ERROR
+
+tags:
+  - name: Chat
+    description: AI-powered chat operations for task management
