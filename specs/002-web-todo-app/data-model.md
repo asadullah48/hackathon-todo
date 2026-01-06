@@ -74,10 +74,12 @@ class User(SQLModel, table=True):
 
 Represents a todo item belonging to a specific user.
 
+**Note**: This is the Phase 2 base model. Phase 5 adds advanced fields (due_date, reminder_at, recurrence).
+
 ```python
 from datetime import datetime
 from uuid import UUID, uuid4
-from sqlmodel import SQLModel, Field
+from sqlmodel import SQLModel, Field, Relationship
 from typing import Optional
 
 class Task(SQLModel, table=True):
@@ -92,6 +94,33 @@ class Task(SQLModel, table=True):
     is_completed: bool = Field(default=False)
     created_at: datetime = Field(default_factory=datetime.utcnow)
     updated_at: datetime = Field(default_factory=datetime.utcnow)
+
+    # Phase 5: Self-referential relationship for recurring tasks
+    # Note: SQLModel uses sa_relationship_kwargs for SQLAlchemy options
+    parent_task_id: Optional[UUID] = Field(default=None, foreign_key="tasks.id")
+    parent_task: Optional["Task"] = Relationship(
+        back_populates="child_tasks",
+        sa_relationship_kwargs={"remote_side": "Task.id", "cascade": "all, delete-orphan"}
+    )
+    child_tasks: list["Task"] = Relationship(back_populates="parent_task")
+```
+
+**⚠️ CRITICAL: SQLModel Relationship Syntax**
+
+SQLModel uses SQLAlchemy under the hood but has specific syntax requirements:
+
+```python
+# ✅ CORRECT: Use sa_relationship_kwargs for SQLAlchemy options
+relationship = Relationship(
+    back_populates="other_side",
+    sa_relationship_kwargs={"remote_side": "ModelName.id", "cascade": "..."}
+)
+
+# ❌ INCORRECT: Do NOT use remote_columns directly
+relationship = Relationship(
+    remote_columns=[id],  # WRONG - this is SQLAlchemy syntax, not SQLModel
+    ...
+)
 ```
 
 **Constraints**:
